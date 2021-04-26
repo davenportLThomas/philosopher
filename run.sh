@@ -4,5 +4,5 @@ if [ -f "try" ]; then
 	rm try
 fi
 
-g++ -o try main.cpp
+g++ -pthread -o try main.cpp
 ./try

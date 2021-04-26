@@ -1,12 +1,15 @@
 #include<iostream>
 #include<string>
+#include<random>
+#include<thread>
+#include<unistd.h>//for sleep
+#include<functional>
 
 using namespace std;
 
 //GLOBALS
 int chopstickCount = 0;
 int philosopherCount = 0;
-
 
 //Chopstick has id set by chopStickCount
 class Chopstick
@@ -63,35 +66,76 @@ class Philosopher
 				return 1;
 			}
 			else
-				return 0;
+				return 0;//failed to pick up
 
 		}
-		else return 0;
+		else return 0;//more failure
 
 	}
 
 	void release()//I suppose all releases should be successful
 	{
-		
-
-
+		left->state = left->UNUSED;
+		right->state = right->UNUSED;
+		return;
 	}
 
+	void whileHungry()
+	{
+		if(pickUp())//returns true if it can be picked up
+		{
+			this->state = EATING;
+		}
+		else//pickup did not happen
+		{
+			cout << this->name << " was DENIED" << endl;
+			this->state = HUNGRY;
+		}
 
-	void run()//this is going to be the philosophical loop if you will
+		return;
+	}
+	
+	void whileEating()
+	{
+		release();//pretty straight forward
+		this->state = THINKING;
+		return;
+	}
+
+	void whileThinking()
+	{
+		this->state = HUNGRY;
+		return;
+	}
+
+	void print()
+	{
+		cout << this->name << "  State: ";
+		if(this->state == HUNGRY)
+			cout << "HUNGRY" << endl;
+		if(this->state == EATING)
+			cout << "EATING" << endl;
+		if(this->state == THINKING)
+			cout << "THINKING" << endl;
+		return;
+	}
+
+	int run()//this is going to be the philosophical loop if you will
 	{
 		do
 		{
-			if(pickUp())//returns true if it can be picked up
-			{
-
-			}
-			else//pickup did not happen
-			{
-
-			}
-
+			print();
+			//wait a random amount if time
+			int n = rand() % 5; //currently 1 to 10 seconds
+			sleep(n);
+			if(this->state == HUNGRY)
+				whileHungry();
+			else if(this->state == EATING)
+				whileEating();
+			else if(this->state == THINKING)
+				whileThinking();
 		}while(1);
+		return 0;
 	}	
 };
 
@@ -113,7 +157,12 @@ int main()
 	cout << Socrates->name << " " << Socrates->left->id << " " <<  Socrates->right->id << endl;
 	cout << Confucius->name << " " << Confucius->left->id << " " <<  Confucius->right->id << endl;
 
+	//where threading must begin
+	thread thread1(&Philosopher::run, Plato);
+	thread thread2(&Philosopher::run, Socrates);
+	thread thread3(&Philosopher::run, Confucius);
 
+	thread1.join();
 
 
 	return 0;
