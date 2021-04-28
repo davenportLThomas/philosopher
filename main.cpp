@@ -126,7 +126,11 @@ class Philosopher
 		{
 			print();
 			//wait a random amount if time
-			int n = rand() % 5; //currently 1 to 10 seconds
+			int n;
+			if(this->state == HUNGRY)
+				n = 1;
+			else
+				n = rand() % 5; //currently 1 to 10 seconds
 			sleep(n);
 			if(this->state == HUNGRY)
 				whileHungry();
