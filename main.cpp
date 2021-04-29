@@ -4,6 +4,8 @@
 #include<thread>
 #include<unistd.h>//for sleep
 #include<functional>
+#include<string>
+
 
 using namespace std;
 
@@ -17,6 +19,7 @@ class Chopstick
 	public:
 	int id;		// number of chopstick
 	enum States{UNUSED, USED}state;
+	
 
 	Chopstick()
 	{
@@ -87,8 +90,8 @@ class Philosopher
 			this->state = EATING;
 		}
 		else//pickup did not happen
-		{
-			cout << this->name << " was DENIED" << endl;
+		{// apparently each << is a new a instruction and when one is hit the content afterwards is outputted. so if there are 2 of those another thread can write something before the last << is executed.
+			cout << this->name + " was DENIED\n";
 			this->state = HUNGRY;
 		}
 
@@ -110,13 +113,23 @@ class Philosopher
 
 	void print()
 	{
-		cout << this->name << "  State: ";
-		if(this->state == HUNGRY)
-			cout << "HUNGRY" << endl;
-		if(this->state == EATING)
-			cout << "EATING" << endl;
-		if(this->state == THINKING)
-			cout << "THINKING" << endl;
+		string output = "";
+		output += this->name + " State: ";
+
+		//cout << this->name << "  State: ";
+		if(this->state == HUNGRY){
+			output += "HUNGRY\n";
+			//cout << "HUNGRY" << endl;
+		}
+		if(this->state == EATING){
+			output += "EATING\n";
+			//cout << "EATING" << endl;
+		}
+		if(this->state == THINKING){
+			output += "THINKING\n";
+			//cout << "THINKING" << endl;
+		}
+		cout << output;
 		return;
 	}
 
@@ -144,17 +157,62 @@ class Philosopher
 };
 
 
+
+
 int main()
 {
+
+#if 1
+	int size = 6;
+	Chopstick **chopsticks = new Chopstick* [size];
+	for (int i = 0; i < size; i++){
+		chopsticks[i] = new Chopstick(); 
+	}
+
+	Philosopher **philosophers = new Philosopher* [size];
+
+	for (int i = 0; i < size; i++){
+		if( i < size - 1){
+			philosophers[i] = new Philosopher("philosopher" + to_string(i+1), chopsticks[i], chopsticks[i+1]);
+		}
+		else{ // must use last chopstick and the first chopstick
+			philosophers[i] = new Philosopher("philosopher" + to_string(i+1), chopsticks[i], chopsticks[0]);
+		}
+	}
+
+	// creating threads
+	thread * threads = new thread [size];
+	for (int i = 0; i < size; i++){
+		threads[i] = thread(&Philosopher::run, philosophers[i]);
+	}
+	threads[0].join();
+
+
+	//cleaning pointers
+	for(int i =0; i < size; i++){
+		delete philosophers[i];
+		delete chopsticks[i];
+	}
+	delete [] philosophers;
+	delete [] chopsticks;
+	delete [] threads;
+
+#else
+
 	//the number of chopsticks MUST equal the number of philosophers
 	//creating chopsticks, perhaps these should be an array
 	Chopstick *zero = new Chopstick();
 	Chopstick *one = new Chopstick();
 	Chopstick *two = new Chopstick();
+
+	Chopstick *three = new Chopstick();
+
 	//creating an equal number of philosophers
 	Philosopher *Plato = new Philosopher("Plato", zero, one);
 	Philosopher *Socrates = new Philosopher("Socrates", one, two);
-	Philosopher *Confucius = new Philosopher("Confucius", two, zero);
+	Philosopher *Confucius = new Philosopher("Confucius", two, three);
+
+	Philosopher *lambo = new Philosopher("lambo", three, zero);
 
 	//test prints
 	cout << Plato->name << " " << Plato->left->id << " " <<  Plato->right->id << endl;
@@ -165,8 +223,9 @@ int main()
 	thread thread1(&Philosopher::run, Plato);
 	thread thread2(&Philosopher::run, Socrates);
 	thread thread3(&Philosopher::run, Confucius);
-
+	thread thread4(&Philosopher::run, lambo);
 	thread1.join();
+#endif 
 
 
 	return 0;
