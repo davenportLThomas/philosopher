@@ -179,15 +179,27 @@ int main()
 {
 
 #if 1
-	int size = 5;
+	int size = 13;
 	Chopstick **chopsticks = new Chopstick* [size];
 	for (int i = 0; i < size; i++){
 		chopsticks[i] = new Chopstick(); 
 	}
-	string names[5] = {"Plato", "Confucius", "Socrates", "Kant", "Locke"};
+	vector<string> names;
+       	names.push_back("Plato");
+	names.push_back("Confucius");
+        names.push_back("Socrates");
+       	names.push_back("Kant");
+       	names.push_back("Locke");
 	Philosopher **philosophers = new Philosopher* [size];
 
 	for (int i = 0; i < size; i++){
+		if(i == names.size())
+		{
+			string randoName = "philosopher_";
+			randoName += to_string(i);
+			cout << randoName;
+			names.push_back(randoName);
+		}		
 		if( i < size - 1){
 			philosophers[i] = new Philosopher(names[i], chopsticks[i], chopsticks[i+1]);
 		}
