@@ -5,6 +5,8 @@
 #include<functional>
 #include<chrono>
 
+#define MAXTIME 60
+
 using namespace std;
 
 //GLOBALS
@@ -60,22 +62,18 @@ class Philosopher
 	}
 
 	//pickUp is what is to be used to pick up chopsticks. It needs to return 0 
-	bool pickUp()
+	bool pickUp()//changing this to make it greedy
 	{
-		//try to pick up
-		// umm what if 
-		if(left->state == left->UNUSED)//can be picked up
-		{
-			if(right->state == right->UNUSED)//picked up both!
-			{
-				left->state = left->USED;
-				right->state = right->USED;
-				return 1;
-			}
-			else
-				return 0;//failed to pick up
+		//try to pick up left chopstick
+		if(left->state == left->UNUSED)
+			left->state = left->USED;
+		//try to pick up both
+		if(right->state == right->UNUSED)
+			right->state = right->USED;
 
-		}
+		//if both are picked up eating is allowed
+		if((left->state == left->USED) && (right->state == right->USED))
+			return 1;
 		else return 0;//more failure
 
 	}
@@ -143,9 +141,9 @@ class Philosopher
 		{
 			//wait a random amount if time
 			//an end condition
-			if(allTime > 20)
+			if(allTime > MAXTIME)
 				break;
-			int n;
+			int n
 			if(this->state == HUNGRY)
 				n = 1;
 			else
@@ -218,10 +216,10 @@ int main()
 	
 
 	for(int i = 0; i < size; i++)
-	{
 		threads[i].join();
+
+	for(int i = 0; i < size; i++)	
 		cout << philosophers[i]->name << "---  Eating: " << philosophers[i]->eatingStat << " Thinking: " << philosophers[i]->thinkingStat << " Hungry: " << philosophers[i]->hungryStat << endl;
-	}
 
 
 	//cleaning pointers
