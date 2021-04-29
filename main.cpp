@@ -7,7 +7,8 @@
 
 using namespace std;
 
-#define MAXTIME 120 
+#define MAXTIME 1200 
+#define EATERS 20 
 
 //GLOBALS
 int chopstickCount = 0;
@@ -188,7 +189,7 @@ int main()
 {
 
 #if 1
-	int size = 13;
+	int size = EATERS;
 	Chopstick **chopsticks = new Chopstick* [size];
 	for (int i = 0; i < size; i++){
 		chopsticks[i] = new Chopstick(); 
@@ -199,6 +200,22 @@ int main()
         names.push_back("Socrates");
        	names.push_back("Kant");
        	names.push_back("Locke");
+	names.push_back("Mario");
+	names.push_back("Thomas");
+	names.push_back("Jacob");
+	names.push_back("Sun Tzu");	
+	names.push_back("DesCartes");
+	names.push_back("Nietzsche");
+	names.push_back("St. Aquinas");
+	names.push_back("Marx");
+	names.push_back("Spinoza");
+	names.push_back("Satre");
+	names.push_back("Beavoir");
+	names.push_back("Russell");
+	names.push_back("Voltaire");
+	names.push_back("Heidegger");
+	names.push_back("Bacon");
+	names.push_back("Kierkegaard");
 	Philosopher **philosophers = new Philosopher* [size];
 
 	for (int i = 0; i < size; i++){
