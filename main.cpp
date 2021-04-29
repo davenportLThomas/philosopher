@@ -2,9 +2,8 @@
 #include<string>
 #include<random>
 #include<thread>
-#include<unistd.h>//for sleep
 #include<functional>
-
+#include<chrono>
 
 using namespace std;
 
@@ -42,6 +41,7 @@ class Philosopher
 	int thinkingStat = 0;
 	int eatingStat = 0;
 	int hungryStat = 0;
+	int allTime = 0;
 	//the status of how hungry dude is, at 10 hungry he dies, is death in the requirements
 	int hungry = 0;//I should randomize
 
@@ -118,23 +118,21 @@ class Philosopher
 	void print()
 	{
 		string output = "";
-		output += this->name + " State: ";
 
+		output += " " + this->name;
 		if(this->state == HUNGRY){
-			output += "HUNGRY   Total: ";
+			output += "     HUNGRY   Total: ";
 			output += to_string(hungryStat);
-			output += "\n";
 		}
 		if(this->state == EATING){
-			output += "EATING            Total: ";
+			output += "	EATING Total: ";
 			output += to_string(eatingStat);
-			output += "\n";
 		}
 		if(this->state == THINKING){
-			output += "THINKING         		 Total: ";
+			output += "	THINKING Total: ";
 			output += to_string(thinkingStat);
-			output += "\n";
 		}
+		output += "\n";
 		cout << output;
 		return;
 	}
@@ -143,15 +141,18 @@ class Philosopher
 	{
 		do
 		{
-			print();
 			//wait a random amount if time
+			//an end condition
+			if(allTime > 20)
+				break;
 			int n;
 			if(this->state == HUNGRY)
 				n = 1;
 			else
-				n = rand() % 20; //currently 1 to 10 seconds
-			sleep(n);
-			cout << n << " ";
+				n = rand() % 20 + 1; //currently 1 to 10 seconds
+			this_thread::sleep_for(chrono::seconds(n));
+			allTime += n;
+			print();
 			if(this->state == HUNGRY)
 			{	
 				this->hungryStat += n;
@@ -213,7 +214,14 @@ int main()
 	for (int i = 0; i < size; i++){
 		threads[i] = thread(&Philosopher::run, philosophers[i]);
 	}
-	threads[0].join();
+	
+	
+
+	for(int i = 0; i < size; i++)
+	{
+		threads[i].join();
+		cout << philosophers[i]->name << "---  Eating: " << philosophers[i]->eatingStat << " Thinking: " << philosophers[i]->thinkingStat << " Hungry: " << philosophers[i]->hungryStat << endl;
+	}
 
 
 	//cleaning pointers
