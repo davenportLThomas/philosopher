@@ -38,6 +38,10 @@ class Philosopher
 	int id;
 	string name;
 	Chopstick *left, *right;
+	//keeping track of states
+	int thinkingStat = 0;
+	int eatingStat = 0;
+	int hungryStat = 0;
 	//the status of how hungry dude is, at 10 hungry he dies, is death in the requirements
 	int hungry = 0;//I should randomize
 
@@ -91,7 +95,7 @@ class Philosopher
 		}
 		else//pickup did not happen
 		{
-			cout << this->name + " was DENIED\n";
+	//		cout << this->name + " was DENIED\n";
 			this->state = HUNGRY;
 		}
 
@@ -116,18 +120,20 @@ class Philosopher
 		string output = "";
 		output += this->name + " State: ";
 
-		//cout << this->name << "  State: ";
 		if(this->state == HUNGRY){
-			output += "HUNGRY\n";
-			//cout << "HUNGRY" << endl;
+			output += "HUNGRY   Total: ";
+			output += to_string(hungryStat);
+			output += "\n";
 		}
 		if(this->state == EATING){
-			output += "EATING\n";
-			//cout << "EATING" << endl;
+			output += "EATING            Total: ";
+			output += to_string(eatingStat);
+			output += "\n";
 		}
 		if(this->state == THINKING){
-			output += "THINKING\n";
-			//cout << "THINKING" << endl;
+			output += "THINKING         		 Total: ";
+			output += to_string(thinkingStat);
+			output += "\n";
 		}
 		cout << output;
 		return;
@@ -143,14 +149,24 @@ class Philosopher
 			if(this->state == HUNGRY)
 				n = 1;
 			else
-				n = rand() % 5; //currently 1 to 10 seconds
+				n = rand() % 20; //currently 1 to 10 seconds
 			sleep(n);
+			cout << n << " ";
 			if(this->state == HUNGRY)
+			{	
+				this->hungryStat += n;
 				whileHungry();
+			}
 			else if(this->state == EATING)
+			{
+				this->eatingStat += n;
 				whileEating();
+			}
 			else if(this->state == THINKING)
+			{
+				this->thinkingStat += n;
 				whileThinking();
+			}
 		}while(1);
 		return 0;
 	}	
@@ -168,15 +184,15 @@ int main()
 	for (int i = 0; i < size; i++){
 		chopsticks[i] = new Chopstick(); 
 	}
-
+	string names[5] = {"Plato", "Confucius", "Socrates", "Kant", "Locke"};
 	Philosopher **philosophers = new Philosopher* [size];
 
 	for (int i = 0; i < size; i++){
 		if( i < size - 1){
-			philosophers[i] = new Philosopher("philosopher_" + to_string(i+1), chopsticks[i], chopsticks[i+1]);
+			philosophers[i] = new Philosopher(names[i], chopsticks[i], chopsticks[i+1]);
 		}
 		else{ // must use last chopstick and the first chopstick
-			philosophers[i] = new Philosopher("philosopher_" + to_string(i+1), chopsticks[i], chopsticks[0]);
+			philosophers[i] = new Philosopher(names[i], chopsticks[i], chopsticks[0]);
 		}
 	}
 
