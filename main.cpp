@@ -7,6 +7,8 @@
 
 using namespace std;
 
+#define MAXTIME 120 
+
 //GLOBALS
 int chopstickCount = 0;
 int philosopherCount = 0;
@@ -68,9 +70,15 @@ class Philosopher
 		{
 			if(right->state == right->UNUSED)//picked up both!
 			{
-				left->state = left->USED;
-				right->state = right->USED;
-				return 1;
+				//coin flip
+				int flip = rand() % 2;
+				if(flip)
+				{
+					left->state = left->USED;
+					right->state = right->USED;
+					return 1;
+				}
+				else return 0;
 			}
 			else
 				return 0;//failed to pick up
@@ -143,7 +151,7 @@ class Philosopher
 		{
 			//wait a random amount if time
 			//an end condition
-			if(allTime > 20)
+			if(allTime > MAXTIME) 
 				break;
 			int n;
 			if(this->state == HUNGRY)
@@ -215,15 +223,16 @@ int main()
 		threads[i] = thread(&Philosopher::run, philosophers[i]);
 	}
 	
-	
 
 	for(int i = 0; i < size; i++)
-	{
 		threads[i].join();
+
+
+        cout << endl << endl << "====================Program finished==========================" << endl << endl;	
+
+	for(int i = 0; i < size; i++)
 		cout << philosophers[i]->name << "---  Eating: " << philosophers[i]->eatingStat << " Thinking: " << philosophers[i]->thinkingStat << " Hungry: " << philosophers[i]->hungryStat << endl;
-	}
-
-
+	
 	//cleaning pointers
 	for(int i =0; i < size; i++){
 		delete philosophers[i];
