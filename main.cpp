@@ -4,7 +4,6 @@
 #include<thread>
 #include<unistd.h>//for sleep
 #include<functional>
-#include<string>
 
 
 using namespace std;
@@ -60,6 +59,7 @@ class Philosopher
 	bool pickUp()
 	{
 		//try to pick up
+		// umm what if 
 		if(left->state == left->UNUSED)//can be picked up
 		{
 			if(right->state == right->UNUSED)//picked up both!
@@ -90,7 +90,7 @@ class Philosopher
 			this->state = EATING;
 		}
 		else//pickup did not happen
-		{// apparently each << is a new a instruction and when one is hit the content afterwards is outputted. so if there are 2 of those another thread can write something before the last << is executed.
+		{
 			cout << this->name + " was DENIED\n";
 			this->state = HUNGRY;
 		}
@@ -163,7 +163,7 @@ int main()
 {
 
 #if 1
-	int size = 6;
+	int size = 5;
 	Chopstick **chopsticks = new Chopstick* [size];
 	for (int i = 0; i < size; i++){
 		chopsticks[i] = new Chopstick(); 
@@ -173,10 +173,10 @@ int main()
 
 	for (int i = 0; i < size; i++){
 		if( i < size - 1){
-			philosophers[i] = new Philosopher("philosopher" + to_string(i+1), chopsticks[i], chopsticks[i+1]);
+			philosophers[i] = new Philosopher("philosopher_" + to_string(i+1), chopsticks[i], chopsticks[i+1]);
 		}
 		else{ // must use last chopstick and the first chopstick
-			philosophers[i] = new Philosopher("philosopher" + to_string(i+1), chopsticks[i], chopsticks[0]);
+			philosophers[i] = new Philosopher("philosopher_" + to_string(i+1), chopsticks[i], chopsticks[0]);
 		}
 	}
 
@@ -205,14 +205,14 @@ int main()
 	Chopstick *one = new Chopstick();
 	Chopstick *two = new Chopstick();
 
-	Chopstick *three = new Chopstick();
+	//Chopstick *three = new Chopstick();
 
 	//creating an equal number of philosophers
 	Philosopher *Plato = new Philosopher("Plato", zero, one);
 	Philosopher *Socrates = new Philosopher("Socrates", one, two);
-	Philosopher *Confucius = new Philosopher("Confucius", two, three);
+	Philosopher *Confucius = new Philosopher("Confucius", two, zero);
 
-	Philosopher *lambo = new Philosopher("lambo", three, zero);
+	//Philosopher *lambo = new Philosopher("lambo", three, zero);
 
 	//test prints
 	cout << Plato->name << " " << Plato->left->id << " " <<  Plato->right->id << endl;
@@ -223,7 +223,7 @@ int main()
 	thread thread1(&Philosopher::run, Plato);
 	thread thread2(&Philosopher::run, Socrates);
 	thread thread3(&Philosopher::run, Confucius);
-	thread thread4(&Philosopher::run, lambo);
+	//thread thread4(&Philosopher::run, lambo);
 	thread1.join();
 #endif 
 
